@@ -2,9 +2,11 @@ import asyncio
 import logging
 
 from maxapi import Bot, Dispatcher
+from maxapi.enums.button_type import ButtonType
 from maxapi.filters.command import Command
-from maxapi.types import BotStarted, MessageCreated, CallbackButton, MessageCallback, OpenAppButton
+from maxapi.types import BotStarted, MessageCreated, CallbackButton, MessageCallback, OpenAppButton, MessageButton
 from maxapi.utils.inline_keyboard import InlineKeyboardBuilder
+from sqlalchemy.util import parse_user_argument_for_enum
 
 from database.admins import AdminsDatabase
 from database.dean import DeanRepresentativesDatabase
@@ -30,6 +32,7 @@ request_dean = DeanRequestDataBase()
 study_certificate_requests = StudyCertificateRequestsDatabase()
 dean_representatives = DeanRepresentativesDatabase()
 
+
 @dp.bot_started()
 async def bot_started(event: BotStarted):
     await event.bot.send_message(
@@ -37,13 +40,14 @@ async def bot_started(event: BotStarted):
         text='Привет! Отправь мне /start'
     )
 
+
 @dp.message_created(Command('setd'))
 async def setd(event: MessageCreated):
-    if (dean_representatives.is_representative(event.from_user.user_id) and users.has_role(event.from_user.user_id, "dean")):
+    if (dean_representatives.is_representative(event.from_user.user_id) and users.has_role(event.from_user.user_id,"dean")):
         await event.bot.send_message(chat_id=event.chat.chat_id, text="Вы уже являетесь представителем деканата!")
     elif (request_dean.get_user(user_id=event.from_user.user_id) == None):
         request_dean.add_user(user_id=event.from_user.user_id, username=event.from_user.full_name)
-        await event.bot.send_message(chat_id = event.chat.chat_id, text="Заявка отправлена на рассмотрение!")
+        await event.bot.send_message(chat_id=event.chat.chat_id, text="Заявка отправлена на рассмотрение!")
     else:
         await event.bot.send_message(chat_id=event.chat.chat_id, text="Вы уже отправляли заявку!")
 
@@ -52,7 +56,6 @@ async def setd(event: MessageCreated):
 async def print_menu(event: MessageCreated):
     print(users.get_all_users())
     text_builder = "Выберите действие"
-    text_lable = ""
     role = users.get_user_role(event.from_user.user_id)
     print(role)
     builder = InlineKeyboardBuilder()
@@ -67,25 +70,15 @@ async def print_menu(event: MessageCreated):
         )
         builder.row(
             CallbackButton(
-                text='Добавить админа',
-                payload='add_admin',
+                text='Выдать роль',
+                payload='add_role',
             ),
             CallbackButton(
-                text='Удалить админа',
-                payload='remove_admin',
+                text='Удалить роль',
+                payload='remove_role',
             )
         )
-        builder.row(
-            CallbackButton(
-                text='Добавить представителя деканата',
-                payload='add_dean',
-            ),
-            CallbackButton(
-                text='Удалить представителя деканата',
-                payload='remove_dean',
-            )
-        )
-        text_lable="Вы админ!"
+        text_lable = "Вы админ!"
     elif role == "dean":
         builder.row(
             CallbackButton(
@@ -99,6 +92,18 @@ async def print_menu(event: MessageCreated):
             CallbackButton(
                 text='Заказать справку об обучении',
                 payload='information_about_training',
+            )
+        )
+        builder.row(
+            CallbackButton(
+                text='Подписаться на новости ВУЗа',
+                payload='subscribe_news',
+            )
+        )
+        builder.row(
+            CallbackButton(
+                text='Подписаться на новости Общежития',
+                payload='subscribe_news',
             )
         )
         text_lable = "Вы студент!"
@@ -119,6 +124,10 @@ async def print_menu(event: MessageCreated):
             CallbackButton(
                 text='Добавить новость',
                 payload='add_news',
+            ),
+            CallbackButton(
+                text='Удалить новость',
+                payload='delete_news',
             )
         )
         text_lable = "Вы сммщик!"
@@ -174,12 +183,14 @@ async def hello(event: MessageCreated):
         chat_id=event.chat.chat_id,
         text="Используйте /menu для дальнейшей работы"
     )
+
+
 async def show_next_request_dean(chat_id, bot, index=0):
     """Показывает следующую заявку с кнопками управления"""
     all_requests = request_dean.get_all_users()
 
     if not all_requests:
-        await bot.send_message(chat_id=chat_id, text = "На данный момент заявок нет.")
+        await bot.send_message(chat_id=chat_id, text="На данный момент заявок нет.")
         return
 
     current_dean_request_index[chat_id] = index
@@ -206,6 +217,7 @@ async def show_next_request_dean(chat_id, bot, index=0):
         text=message_text,
         attachments=[builder.as_markup()]
     )
+
 
 async def show_next_request_student_info(chat_id, bot, index=0):
     all_requests = study_certificate_requests.get_all_requests()
@@ -249,7 +261,68 @@ async def handle_text_input(event: MessageCreated):
     if user_id in user_states:
         current_state = user_states[user_id]
         user_input = event.message.body.text.strip()
-        if current_state == "waiting_full_name":
+
+        if current_state == "waiting_user_id":
+            try:
+                target_user_id = int(user_input)
+
+                # Проверяем существование пользователя в базе
+                if not users.is_user_exists(target_user_id):
+                    await event.bot.send_message(
+                        chat_id=event.chat.chat_id,
+                        text="❌ Пользователь с таким ID не найден в базе. Введите ID пользователя снова:"
+                    )
+                    return
+
+                # Пытаемся отправить сообщение пользователю
+                try:
+                    action_type = user_temp_data[user_id].get("action_type", "add")
+                    if action_type == "add":
+                        await event.bot.send_message(
+                            user_id=target_user_id,
+                            text=f"Вас назначили на роль {user_temp_data[user_id]['selected_role']}"
+                        )
+                    else:  # remove
+                        await event.bot.send_message(
+                            user_id=target_user_id,
+                            text="С вас снята роль"
+                        )
+
+                    # Если сообщение отправлено успешно, сохраняем ID и запрашиваем подтверждение
+                    user_temp_data[user_id]["target_user_id"] = target_user_id
+
+                    builder = InlineKeyboardBuilder()
+                    if action_type == "add":
+                        builder.row(
+                            CallbackButton(text="Да", payload="confirm_user"),
+                            CallbackButton(text="Нет", payload="deny_user"),
+                            CallbackButton(text="❌ Отмена", payload="cancel_operation")
+                        )
+                    else:  # remove
+                        builder.row(
+                            CallbackButton(text="Да", payload="confirm_remove"),
+                            CallbackButton(text="Нет", payload="deny_remove"),
+                            CallbackButton(text="❌ Отмена", payload="cancel_operation")
+                        )
+
+                    await event.bot.send_message(
+                        chat_id=event.chat.chat_id,
+                        text="✅ Сообщение пользователю отправлено. Это нужный пользователь?",
+                        attachments=[builder.as_markup()]
+                    )
+
+                except Exception as e:
+                    await event.bot.send_message(
+                        chat_id=event.chat.chat_id,
+                        text="❌ Пользователь не найден. Введите ID пользователя снова:"
+                    )
+
+            except ValueError:
+                await event.bot.send_message(
+                    chat_id=event.chat.chat_id,
+                    text="❌ ID должен быть числом. Введите ID снова:"
+                )
+        elif current_state == "waiting_full_name":
             # Сохраняем ФИО и запрашиваем группу
             user_temp_data[user_id] = {"full_name": user_input}
             user_states[user_id] = "waiting_group"
@@ -360,7 +433,8 @@ async def message_callback(callback: MessageCallback):
             dean_representatives.add_representative(user_id=user_id)
             users.add_user(user_id, "dean")
             await callback.message.answer(f"✅ Заявка пользователя {user_id} принята!")
-            await callback.bot.send_message(user_id=user_id, text="✅ Вашу заявку приняли! Вам доступны новые возможности!")
+            await callback.bot.send_message(user_id=user_id,
+                                            text="✅ Вашу заявку приняли! Вам доступны новые возможности!")
             all_requests = request_dean.get_all_users()
             if all_requests:
                 current_index = current_dean_request_index.get(chat_id, 0)
@@ -398,7 +472,8 @@ async def message_callback(callback: MessageCallback):
         if study_certificate_requests.is_request_exists(user_id):
             study_certificate_requests.delete_request(request_id=user_id)
             await callback.message.answer(f"❌ Заявка студента {user_id} отклонена!")
-            await callback.bot.send_message(user_id=user_id, text="❌ Вам отказали в выдаче справки! Обратитесь в деканат!")
+            await callback.bot.send_message(user_id=user_id,
+                                            text="❌ Вам отказали в выдаче справки! Обратитесь в деканат!")
             all_requests = study_certificate_requests.get_all_requests()
             if all_requests:
                 current_index = current_study_request_index.get(chat_id, 0)
@@ -407,17 +482,170 @@ async def message_callback(callback: MessageCallback):
                 await callback.message.answer(f"Заявки закончились!")
 
     elif payload == "set_applicant":
-        if not users.is_user_exists(callback.from_user.user_id):
+        if not users.has_role(callback.from_user.user_id, "admin"):
             users.add_user(callback.from_user.user_id, "applicant")
-        await callback.message.answer(f"Ваша роль сменена на Абитуриент\nИспользуйте /menu")
+            await callback.message.answer(f"Ваша роль сменена на Абитуриент\nИспользуйте /menu")
 
     elif payload == "set_student":
-        if not users.is_user_exists(callback.from_user.user_id):
+        if not users.has_role(callback.from_user.user_id, "admin"):
             users.add_user(callback.from_user.user_id, "student")
-        await callback.message.answer(f"Ваша роль сменена на Студент\nИспользуйте /menu")
+            await callback.message.answer(f"Ваша роль сменена на Студент\nИспользуйте /menu")
 
     elif payload == "future_events":
         pass
+    elif payload == "add_role":
+        builder = InlineKeyboardBuilder()
+
+        builder.row(
+            CallbackButton(
+                text="admin",
+                payload="role_admin"
+            ),
+            CallbackButton(
+                text="dean",
+                payload="role_dean"
+            ),
+            CallbackButton(
+                text="smm",
+                payload="role_smm"
+            ),
+        )
+        builder.row(
+            CallbackButton(
+                text="head_dormitory",
+                payload="role_head_dormitory"
+            ),
+        )
+        await callback.message.answer(
+            text="Выберите роль",
+            attachments=[
+                builder.as_markup()
+            ]
+        )
+    elif payload == "remove_role":
+        # Получаем пользователей по ролям
+        admin_users = users.get_users_by_role("admin")
+        dean_users = users.get_users_by_role("dean")
+        smm_users = users.get_users_by_role("smm")
+        head_dormitory_users = users.get_users_by_role("head_dormitory")
+
+        # Формируем сообщение со списком пользователей
+        message_text = "📋 Пользователи с ролями:\n\n"
+
+        if admin_users:
+            message_text += "👑 Админы:\n"
+            for user in admin_users:
+                message_text += f"• ID: {user['id']}\n"
+            message_text += "\n"
+
+        if dean_users:
+            message_text += "🎓 Деканат:\n"
+            for user in dean_users:
+                message_text += f"• ID: {user['id']}\n"
+            message_text += "\n"
+
+        if smm_users:
+            message_text += "📱 SMM:\n"
+            for user in smm_users:
+                message_text += f"• ID: {user['id']}\n"
+            message_text += "\n"
+
+        if head_dormitory_users:
+            message_text += "🏠 Заведующие общежитием:\n"
+            for user in head_dormitory_users:
+                message_text += f"• ID: {user['id']}\n"
+            message_text += "\n"
+
+        if not admin_users and not dean_users and not smm_users and not head_dormitory_users:
+            message_text = "❌ Пользователей с ролями не найдено"
+
+        # Отправляем список пользователей
+        await callback.message.answer(message_text)
+
+        # Затем запрашиваем ID для удаления с кнопкой отмены
+        builder = InlineKeyboardBuilder()
+        builder.row(CallbackButton(text="❌ Отмена", payload="cancel_operation"))
+
+        user_temp_data[callback.from_user.user_id] = {"action_type": "remove"}
+        user_states[callback.from_user.user_id] = "waiting_user_id"
+        await callback.message.answer(
+            "Введите ID пользователя для удаления роли:",
+            attachments=[builder.as_markup()]
+        )
+
+    elif payload.startswith("role_"):
+        selected_role = "_".join(payload.split("_")[1:])
+        user_temp_data[callback.from_user.user_id] = {"selected_role": selected_role, "action_type": "add"}
+        user_states[callback.from_user.user_id] = "waiting_user_id"
+
+        builder = InlineKeyboardBuilder()
+        builder.row(CallbackButton(text="❌ Отмена", payload="cancel_operation"))
+
+        await callback.message.answer(
+            "Введите ID пользователя:",
+            attachments=[builder.as_markup()]
+        )
+
+    elif payload == "confirm_user":
+        user_data = user_temp_data.get(callback.from_user.user_id, {})
+        role = user_data.get("selected_role")
+        target_user_id = user_data.get("target_user_id")
+
+        if role and target_user_id:
+            if role == "admin":
+                admins.add_admin(target_user_id)
+            elif role == "dean":
+                dean_representatives.add_representative(target_user_id)
+            users.add_user(target_user_id, role)
+            await callback.message.answer(f"Пользователю назначена роль {role}")
+        else:
+            await callback.message.answer("❌ Ошибка: данные не найдены")
+
+        if callback.from_user.user_id in user_states:
+            del user_states[callback.from_user.user_id]
+        if callback.from_user.user_id in user_temp_data:
+            del user_temp_data[callback.from_user.user_id]
+
+    elif payload == "deny_user":
+        # Сбрасываем состояние до шага ввода ID
+        user_states[callback.from_user.user_id] = "waiting_user_id"
+        await callback.message.answer("Введите ID пользователя снова:")
+
+    elif payload == "confirm_remove":
+        user_data = user_temp_data.get(callback.from_user.user_id, {})
+        target_user_id = user_data.get("target_user_id")
+
+        if target_user_id:
+            # Получаем текущую роль пользователя для информационного сообщения
+            current_role = users.get_user_role(target_user_id)
+
+            # Удаляем пользователя из всех таблиц
+            admins.remove_admin(target_user_id)
+            dean_representatives.remove_representative(target_user_id)
+            users.update_user_role(target_user_id, "user")
+
+            await callback.message.answer(f"Пользователю {target_user_id} удалена роль {current_role}")
+        else:
+            await callback.message.answer("❌ Ошибка: данные не найдены")
+
+        if callback.from_user.user_id in user_states:
+            del user_states[callback.from_user.user_id]
+        if callback.from_user.user_id in user_temp_data:
+            del user_temp_data[callback.from_user.user_id]
+
+    elif payload == "deny_remove":
+        # Сбрасываем состояние до шага ввода ID
+        user_states[callback.from_user.user_id] = "waiting_user_id"
+        await callback.message.answer("Введите ID пользователя снова:")
+
+    elif payload == "cancel_operation":
+        # Очищаем состояние и данные пользователя
+        if callback.from_user.user_id in user_states:
+            del user_states[callback.from_user.user_id]
+        if callback.from_user.user_id in user_temp_data:
+            del user_temp_data[callback.from_user.user_id]
+        await callback.message.answer("❌ Операция отменена.")
+
 
 async def main():
     await dp.start_polling(bot)
