@@ -1,9 +1,13 @@
 import sqlite3
 import logging
+import os
 
 
 class DormitoryRequestDatabase:
-    def __init__(self, db_name='dormitory_requests.db'):
+    def __init__(self, db_name='others/dormitory_requests.db'):
+        # Создаем папку others, если она не существует
+        os.makedirs(os.path.dirname(db_name), exist_ok=True)
+
         self.db_name = db_name
         self._create_table()
         self._setup_logging()

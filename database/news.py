@@ -1,10 +1,12 @@
+import os
 import sqlite3
 import logging
 import json
 
 
 class NewsDatabase:
-    def __init__(self, db_name='news.db'):
+    def __init__(self, db_name='others/news.db'):
+        os.makedirs(os.path.dirname(db_name), exist_ok=True)
         self.db_name = db_name
         self._create_table()
         self._setup_logging()

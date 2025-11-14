@@ -1,8 +1,10 @@
+import os
 import sqlite3
 import logging
 
 class MailingDatabase:
-    def __init__(self, db_name='mailing_subscriptions.db'):
+    def __init__(self, db_name='others/mailing_subscriptions.db'):
+        os.makedirs(os.path.dirname(db_name), exist_ok=True)
         self.db_name = db_name
         self._create_table()
         self._setup_logging()

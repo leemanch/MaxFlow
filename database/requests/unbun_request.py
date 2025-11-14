@@ -1,10 +1,12 @@
+import os
 import sqlite3
 import logging
 from datetime import datetime
 
 
 class UnbanRequestsDatabase:
-    def __init__(self, db_name='unban_requests.db'):
+    def __init__(self, db_name='others/unban_requests.db'):
+        os.makedirs(os.path.dirname(db_name), exist_ok=True)
         self.db_name = db_name
         self._create_table()
         self._setup_logging()

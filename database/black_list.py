@@ -1,9 +1,11 @@
+import os
 import sqlite3
 import logging
 
 
 class BlacklistDatabase:
-    def __init__(self, db_name='blacklist.db'):
+    def __init__(self, db_name='others/blacklist.db'):
+        os.makedirs(os.path.dirname(db_name), exist_ok=True)
         self.db_name = db_name
         self._create_table()
         self._setup_logging()

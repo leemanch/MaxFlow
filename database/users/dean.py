@@ -1,3 +1,4 @@
+import os
 import sqlite3
 import logging
 
@@ -5,7 +6,8 @@ from database.users.users import UsersDatabase
 
 
 class DeanRepresentativesDatabase:
-    def __init__(self, db_name='dean_representatives.db'):
+    def __init__(self, db_name='others/dean_representatives.db'):
+        os.makedirs(os.path.dirname(db_name), exist_ok=True)
         self.db_name = db_name
         self._create_table()
         self._setup_logging()

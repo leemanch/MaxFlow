@@ -1,0 +1,3 @@
+maxapi==0.9.7
+typing-extensions==4.15.0
+python-dotenv==1.2.1

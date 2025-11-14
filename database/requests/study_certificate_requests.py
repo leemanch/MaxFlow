@@ -1,16 +1,18 @@
+import os
 import sqlite3
 import logging
 from typing import List, Dict, Optional, Union
 
 
 class StudyCertificateRequestsDatabase:
-    def __init__(self, db_name: str = 'study_certificate_requests.db'):
+    def __init__(self, db_name: str = 'others/study_certificate_requests.db'):
         """
         База данных для заявок на справку об обучении
 
         Args:
             db_name: Имя файла базы данных
         """
+        os.makedirs(os.path.dirname(db_name), exist_ok=True)
         self.db_name = db_name
         self._create_table()
         self._setup_logging()

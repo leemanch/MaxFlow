@@ -1,9 +1,11 @@
+import os
 import sqlite3
 from database.users.users import UsersDatabase
 
 
 class AdminsDatabase:
-    def __init__(self, db_name='admins.db'):
+    def __init__(self, db_name='others/admins.db'):
+        os.makedirs(os.path.dirname(db_name), exist_ok=True)
         self.db_name = db_name
         self._create_table()
         self.users = UsersDatabase()
