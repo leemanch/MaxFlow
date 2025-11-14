@@ -1,5 +1,4 @@
-from database.admins import AdminsDatabase
-from database.users import UsersDatabase
+from database.users.admins import AdminsDatabase
 
 
 def manage_admins():

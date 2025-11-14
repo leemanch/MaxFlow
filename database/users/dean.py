@@ -1,7 +1,7 @@
 import sqlite3
 import logging
 
-from database.users import UsersDatabase
+from database.users.users import UsersDatabase
 
 
 class DeanRepresentativesDatabase:

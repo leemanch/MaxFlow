@@ -2,17 +2,17 @@ import asyncio
 import logging
 
 from maxapi import Bot, Dispatcher
-from maxapi.enums.button_type import ButtonType
 from maxapi.filters.command import Command
-from maxapi.types import BotStarted, MessageCreated, CallbackButton, MessageCallback, OpenAppButton, MessageButton
+from maxapi.types import BotStarted, MessageCreated, CallbackButton, MessageCallback
 from maxapi.utils.inline_keyboard import InlineKeyboardBuilder
-from sqlalchemy.util import parse_user_argument_for_enum
+from sqlalchemy.cyextension.util import cache_anon_map
 
-from database.admins import AdminsDatabase
-from database.dean import DeanRepresentativesDatabase
-from database.requests_dean import DeanRequestDataBase
-from database.study_certificate_requests import StudyCertificateRequestsDatabase
-from database.users import UsersDatabase
+from database.mailing import MailingDatabase
+from database.users.admins import AdminsDatabase
+from database.users.dean import DeanRepresentativesDatabase
+from database.requests.requests_dean import DeanRequestDataBase
+from database.requests.study_certificate_requests import StudyCertificateRequestsDatabase
+from database.users.users import UsersDatabase
 
 logging.basicConfig(level=logging.INFO)
 
@@ -31,6 +31,7 @@ admins = AdminsDatabase()
 request_dean = DeanRequestDataBase()
 study_certificate_requests = StudyCertificateRequestsDatabase()
 dean_representatives = DeanRepresentativesDatabase()
+mailings = MailingDatabase()
 
 
 @dp.bot_started()
@@ -54,10 +55,8 @@ async def setd(event: MessageCreated):
 
 @dp.message_created(Command('menu'))
 async def print_menu(event: MessageCreated):
-    print(users.get_all_users())
     text_builder = "Выберите действие"
     role = users.get_user_role(event.from_user.user_id)
-    print(role)
     builder = InlineKeyboardBuilder()
     if role == None:
         return
@@ -96,14 +95,14 @@ async def print_menu(event: MessageCreated):
         )
         builder.row(
             CallbackButton(
-                text='Подписаться на новости ВУЗа',
+                text='Подписки на новости',
                 payload='subscribe_news',
             )
-        )
+        ),
         builder.row(
             CallbackButton(
-                text='Подписаться на новости Общежития',
-                payload='subscribe_news',
+                text='Электронная библиотека',
+                payload='electronic_library',
             )
         )
         text_lable = "Вы студент!"
@@ -161,7 +160,7 @@ async def print_menu(event: MessageCreated):
 
 @dp.message_created(Command('start'))
 async def hello(event: MessageCreated):
-    text_builder = "Выберите вашу роль(старая будет не действительна)"
+    text_builder = "Выберите вашу роль (старая будет не действительна)"
     builder = InlineKeyboardBuilder()
     builder.row(
         CallbackButton(
@@ -328,7 +327,7 @@ async def handle_text_input(event: MessageCreated):
             user_states[user_id] = "waiting_group"
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="✅ ФИО сохранено. Теперь введите вашу группу:"
+                text="✅ ФИО сохранено. Теперь введите вашу группу (Например: ИУК4-31Б):"
             )
         elif current_state == "waiting_group":
             # Сохраняем группу и запрашиваем количество справок
@@ -345,6 +344,12 @@ async def handle_text_input(event: MessageCreated):
                     await event.bot.send_message(
                         chat_id=event.chat.chat_id,
                         text="❌ Количество должно быть положительным числом. Введите количество справок:"
+                    )
+                    return
+                if count > 5:
+                    await event.bot.send_message(
+                        chat_id=event.chat.chat_id,
+                        text="❌ Максимальное количество справок - 5. Введите количество справок:"
                     )
                     return
                 # Получаем сохраненные данные
@@ -404,7 +409,7 @@ async def message_callback(callback: MessageCallback):
         await show_next_request_student_info(chat_id, callback.bot, 0)
     elif payload == "information_about_training":
         user_states[callback.from_user.user_id] = "waiting_full_name"
-        await callback.message.answer("📝 Заполните данные для заявки на справку об обучении.\n\nВведите ваше ФИО:")
+        await callback.message.answer("📝 Заполните данные для заявки на справку об обучении.\n\nВведите ваше ФИО (Например: Иванов Иван Иванович):")
     elif payload == "next_requestDean":
         all_requests = request_dean.get_all_users()
         if not all_requests:
@@ -645,6 +650,97 @@ async def message_callback(callback: MessageCallback):
         if callback.from_user.user_id in user_temp_data:
             del user_temp_data[callback.from_user.user_id]
         await callback.message.answer("❌ Операция отменена.")
+    elif payload == "subscribe_news":
+        mailing_university = mailings.is_subscribed(callback.from_user.user_id, "university")
+        mailing_dormitory = mailings.is_subscribed(callback.from_user.user_id, "dormitory")
+
+        builder = InlineKeyboardBuilder()
+        builder.row(
+            CallbackButton(
+                text="Подписаться" if not mailing_university else "Отписаться",
+                payload="subscribe_news_university"
+            ),
+        )
+        await callback.message.answer(
+            text=f"Подписка на новости ВУЗа: {'✅ Подписан' if mailing_university else '❌ Не подписан'}",
+            attachments=[
+                builder.as_markup()
+            ]
+        )
+
+        builder = InlineKeyboardBuilder()
+        builder.row(
+            CallbackButton(
+                text="Подписаться" if not mailing_dormitory else "Отписаться",
+                payload="subscribe_news_dormitory"
+            ),
+        )
+        await callback.message.answer(
+            text=f"Подписка на новости Общежития: {'✅ Подписан' if mailing_dormitory else '❌ Не подписан'}",
+            attachments=[
+                builder.as_markup()
+            ]
+        )
+    elif payload == "subscribe_news_university":
+        # Удаляем старое сообщение
+        await callback.message.delete()
+
+        if mailings.is_subscribed(callback.from_user.user_id, "university"):
+            mailings.remove_subscription(callback.from_user.user_id, "university")
+            new_status = False
+        else:
+            mailings.add_subscription(callback.from_user.user_id, callback.chat.chat_id, "university")
+            new_status = True
+
+
+        # Обновляем кнопки
+        builder = InlineKeyboardBuilder()
+        builder.row(
+            CallbackButton(
+                text="Подписаться" if not new_status else "Отписаться",
+                payload="subscribe_news_university"
+            ),
+        )
+        await callback.bot.send_message(
+            chat_id=callback.chat.chat_id,
+            text=f"Подписка на новости ВУЗа: {'✅ Подписан' if new_status else '❌ Не подписан'}",
+            attachments=[
+                builder.as_markup()
+            ]
+        )
+
+    elif payload == "subscribe_news_dormitory":
+        # Удаляем старое сообщение
+        await callback.message.delete()
+
+        if mailings.is_subscribed(callback.from_user.user_id, "dormitory"):
+            mailings.remove_subscription(callback.from_user.user_id, "dormitory")
+            new_status = False
+        else:
+            mailings.add_subscription(callback.from_user.user_id, callback.chat.chat_id, "dormitory")
+            new_status = True
+
+        builder = InlineKeyboardBuilder()
+        builder.row(
+            CallbackButton(
+                text="Подписаться" if not new_status else "Отписаться",
+                payload="subscribe_news_dormitory"
+            ),
+        )
+        await callback.bot.send_message(
+            chat_id=callback.chat.chat_id,
+            text=f"Подписка на новости Общежития: {'✅ Подписан' if new_status else '❌ Не подписан'}",
+            attachments=[
+                builder.as_markup()
+            ]
+        )
+    elif payload == "electronic_library":
+        await callback.message.answer('''Информация по использованию электронной библиотеки
+        Подключение осуществляется через сеть Интернет, в многопользовательском режиме по IP-адресам с компьютеров КФ МГТУ им. Н.Э. Баумана.
+        Для того, чтобы начать пользоваться электронной библиотекой, вам необходимо обратиться в кабинет УАК3.216 для получения абонемента 1-2 курсов и в УАК3.217 для получения абонемента 3-6 курсов
+        Для получения дополнительной информации перейдите по ссылке:"
+        https://kf.bmstu.ru/units/nauchno-tehnicheskaya-biblioteka/elektronnye-informacionnye-resursy''')
+
 
 
 async def main():
