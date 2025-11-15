@@ -62,7 +62,7 @@ async def check_blacklist(user_id: int, chat_id: int, bot: Bot) -> bool:
     blacklisted_user = black_list.is_in_blacklist(user_id)
     if blacklisted_user:
         message = (
-            f"❌ Вы находитесь в черном списке и не можете использовать бота.\n"
+            f"Вы находитесь в черном списке и не можете использовать бота.\n"
             f"Причина: {blacklisted_user['reason']}\n"
             f"Дата добавления: {blacklisted_user['date_added']}\n"
             f"Заявка на разбан: /unban_request <Оправдание>"
@@ -141,29 +141,29 @@ async def show_next_unban_request(chat_id: int, bot: Bot, index: int = 0) -> Non
     all_requests = unban_requests.get_all_pending_requests()
 
     if not all_requests:
-        await bot.send_message(chat_id=chat_id, text="📭 Активных заявок на разбан нет.")
+        await bot.send_message(chat_id=chat_id, text="Активных заявок на разбан нет.")
         return
 
     current_unban_request_index[chat_id] = index
     request = all_requests[index]
 
     message_text = (
-        f"📨 Заявки на разбан ({len(all_requests)} активных)\n\n"
-        f"🆔 ID заявки: {request['id']}\n"
-        f"👤 Пользователь: {request['username']}\n"
-        f"🆔 User ID: {request['user_id']}\n"
-        f"📅 Дата подачи: {request['date']}\n"
-        f"📝 Описание:\n{request['description']}\n"
+        f"Заявки на разбан ({len(all_requests)} активных)\n\n"
+        f"ID заявки: {request['id']}\n"
+        f"Пользователь: {request['username']}\n"
+        f"User ID: {request['user_id']}\n"
+        f"Дата подачи: {request['date']}\n"
+        f"Описание:\n{request['description']}\n"
     )
 
     builder = InlineKeyboardBuilder()
     builder.row(
-        CallbackButton(text="✅ Одобрить", payload=f"approve_unban_{request['id']}"),
-        CallbackButton(text="❌ Отклонить", payload=f"reject_unban_{request['id']}")
+        CallbackButton(text="Одобрить", payload=f"approve_unban_{request['id']}"),
+        CallbackButton(text="Отклонить", payload=f"reject_unban_{request['id']}")
     )
     builder.row(
-        CallbackButton(text="⏭️ Следующая", payload="next_unban_request"),
-        CallbackButton(text="🛑 Стоп", payload="stop_unban_requests")
+        CallbackButton(text="Следующая", payload="next_unban_request"),
+        CallbackButton(text="Стоп", payload="stop_unban_requests")
     )
 
     await bot.send_message(
@@ -184,22 +184,22 @@ async def show_next_complaint(chat_id: int, bot: Bot, index: int = 0) -> None:
     complaint = complaints[index]
 
     text = (
-        f"📋 Всего жалоб {len(complaints)}\n\n"
+        f"Всего жалоб {len(complaints)}\n\n"
         f"# {complaint['id']}\n"
-        f"👤 username: {complaint['username']}\n"
-        f"🏠 Комната: {complaint['number_room']}\n"
-        f"📝 Текст: {complaint['description']}\n"
-        f"📅 Дата: {complaint['date_created']}\n"
+        f"username: {complaint['username']}\n"
+        f"Комната: {complaint['number_room']}\n"
+        f"Текст: {complaint['description']}\n"
+        f"Дата: {complaint['date_created']}\n"
     )
 
     builder = InlineKeyboardBuilder()
     builder.row(
-        CallbackButton(text="✅ Ответить", payload=f"replyComplaint_{complaint['id']}"),
-        CallbackButton(text="❌ Закрыть", payload=f"closeComplaint_{complaint['id']}")
+        CallbackButton(text="Ответить", payload=f"replyComplaint_{complaint['id']}"),
+        CallbackButton(text="Закрыть", payload=f"closeComplaint_{complaint['id']}")
     )
     builder.row(
-        CallbackButton(text="⏭️ Следующая", payload="next_complaint"),
-        CallbackButton(text="🛑 Стоп", payload="stop_complaints")
+        CallbackButton(text="Следующая", payload="next_complaint"),
+        CallbackButton(text="Стоп", payload="stop_complaints")
     )
 
     await bot.send_message(chat_id=chat_id, text=text, attachments=[builder.as_markup()])
@@ -216,24 +216,24 @@ async def show_next_pass_request(chat_id: int, bot: Bot, index: int = 0) -> None
     request = all_requests[index]
 
     message_text = (
-        f"📋 Всего заявок: {len(all_requests)}\n\n"
-        f"🆔 ID: {request['id']}\n"
-        f"👤 Имя: {request['username']}\n"
-        f"🎓 Группа: {request['user_group']}\n"
-        f"📅 Дата рождения: {request['date_of_birthday']}\n"
-        f"📝 Причина: {request['reason']}\n"
-        f"📅 Дата подачи: {request['submission_date']}"
+        f"Всего заявок: {len(all_requests)}\n\n"
+        f"ID: {request['id']}\n"
+        f"Имя: {request['username']}\n"
+        f"Группа: {request['user_group']}\n"
+        f"Дата рождения: {request['date_of_birthday']}\n"
+        f"Причина: {request['reason']}\n"
+        f"Дата подачи: {request['submission_date']}"
     )
 
     builder = InlineKeyboardBuilder()
     builder.row(
-        CallbackButton(text="✅ Ответить", payload=f"replyPass_{request['id']}"),
-        CallbackButton(text="📄 Автоответ", payload=f"autoReplyPass_{request['id']}"),
-        CallbackButton(text="❌ Отклонить", payload=f"rejectPass_{request['id']}")
+        CallbackButton(text="Ответить", payload=f"replyPass_{request['id']}"),
+        CallbackButton(text="Автоответ", payload=f"autoReplyPass_{request['id']}"),
+        CallbackButton(text="Отклонить", payload=f"rejectPass_{request['id']}")
     )
     builder.row(
-        CallbackButton(text="⏭️ Следующая", payload="next_pass_request"),
-        CallbackButton(text="🛑 Стоп", payload="stop_pass_requests")
+        CallbackButton(text="Следующая", payload="next_pass_request"),
+        CallbackButton(text="Стоп", payload="stop_pass_requests")
     )
 
     await bot.send_message(chat_id=chat_id, text=message_text, attachments=[builder.as_markup()])
@@ -251,20 +251,20 @@ async def show_next_request_dean(chat_id: int, bot: Bot, index: int = 0) -> None
     request = all_requests[index]
 
     message_text = (
-        f"📋 Всего заявок {len(all_requests)}\n\n"
-        f"👤 ID: {request['id']}\n"
-        f"📛 Имя: {request['username']}\n"
-        f"📅 Дата подачи: {request['date_created']}\n"
+        f"Всего заявок {len(all_requests)}\n\n"
+        f"ID: {request['id']}\n"
+        f"Имя: {request['username']}\n"
+        f"Дата подачи: {request['date_created']}\n"
     )
 
     builder = InlineKeyboardBuilder()
     builder.row(
-        CallbackButton(text="✅ Принять", payload=f"approveDean_{request['id']}"),
-        CallbackButton(text="❌ Отказать", payload=f"rejectDean_{request['id']}")
+        CallbackButton(text="Принять", payload=f"approveDean_{request['id']}"),
+        CallbackButton(text="Отказать", payload=f"rejectDean_{request['id']}")
     )
     builder.row(
-        CallbackButton(text="⏭️ Следующая", payload="next_requestDean"),
-        CallbackButton(text="🛑 Стоп", payload="stop_requests")
+        CallbackButton(text="Следующая", payload="next_requestDean"),
+        CallbackButton(text="Стоп", payload="stop_requests")
     )
 
     await bot.send_message(
@@ -286,23 +286,23 @@ async def show_next_request_student_info(chat_id: int, bot: Bot, index: int = 0)
     request = all_requests[index]
 
     message_text = (
-        f"📋 Всего заявок {len(all_requests)}\n\n"
-        f"👤 ID: {request['id']}\n"
-        f"👤 username: {request['username']}\n"
-        f"📛 ФИО: {request['full_name']}\n"
-        f"📛 Группа: {request['group_name']}\n"
-        f"📛 Количество: {request['count']}\n"
-        f"📅 Дата подачи: {request['date_created']}\n"
+        f"Всего заявок {len(all_requests)}\n\n"
+        f"ID: {request['id']}\n"
+        f"username: {request['username']}\n"
+        f"ФИО: {request['full_name']}\n"
+        f"Группа: {request['group_name']}\n"
+        f"Количество: {request['count']}\n"
+        f"Дата подачи: {request['date_created']}\n"
     )
 
     builder = InlineKeyboardBuilder()
     builder.row(
-        CallbackButton(text="✅ Выдать", payload=f"approveStudy_{request['id']}"),
-        CallbackButton(text="❌ Отказать", payload=f"rejectStudy_{request['id']}")
+        CallbackButton(text="Выдать", payload=f"approveStudy_{request['id']}"),
+        CallbackButton(text="Отказать", payload=f"rejectStudy_{request['id']}")
     )
     builder.row(
-        CallbackButton(text="⏭️ Следующая", payload="next_requestStudy"),
-        CallbackButton(text="🛑 Стоп", payload="stop_requests")
+        CallbackButton(text="Следующая", payload="next_requestStudy"),
+        CallbackButton(text="Стоп", payload="stop_requests")
     )
 
     await bot.send_message(
@@ -316,7 +316,7 @@ async def update_news_messages(bot: Bot, news_item: Dict[str, Any]) -> None:
     """Обновляет сообщения новостей у подписчиков"""
     try:
         message_ids = news_item.get("message_ids", [])
-        news_text = f"📢 Новость ВУЗа\n\nЗаголовок: {news_item['title']}\n\n{news_item['description']}"
+        news_text = f"Новость ВУЗа\n\nЗаголовок: {news_item['title']}\n\n{news_item['description']}"
 
         for message_id in message_ids:
             try:
@@ -497,7 +497,7 @@ async def handle_waiting_user_id(event: MessageCreated, user_id: int, user_input
         if not users.is_user_exists(target_user_id):
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Пользователь с таким ID не найден в базе. Введите ID пользователя снова:"
+                text="Пользователь с таким ID не найден в базе. Введите ID пользователя снова:"
             )
             return
 
@@ -518,31 +518,31 @@ async def handle_waiting_user_id(event: MessageCreated, user_id: int, user_input
                 builder.row(
                     CallbackButton(text="Да", payload="confirm_user"),
                     CallbackButton(text="Нет", payload="deny_user"),
-                    CallbackButton(text="❌ Отмена", payload="cancel_operation")
+                    CallbackButton(text="Отмена", payload="cancel_operation")
                 )
             else:
                 builder.row(
                     CallbackButton(text="Да", payload="confirm_remove"),
                     CallbackButton(text="Нет", payload="deny_remove"),
-                    CallbackButton(text="❌ Отмена", payload="cancel_operation")
+                    CallbackButton(text="Отмена", payload="cancel_operation")
                 )
 
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="✅ Сообщение пользователю отправлено. Это нужный пользователь?",
+                text="Сообщение пользователю отправлено. Это нужный пользователь?",
                 attachments=[builder.as_markup()]
             )
 
         except Exception:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Пользователь не найден. Введите ID пользователя снова:"
+                text="Пользователь не найден. Введите ID пользователя снова:"
             )
 
     except ValueError:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ ID должен быть числом. Введите ID снова:"
+            text="ID должен быть числом. Введите ID снова:"
         )
 
 
@@ -554,31 +554,31 @@ async def handle_waiting_news_id_for_edit(event: MessageCreated, user_id: int, u
         if not news_item:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Новость с таким ID не найдена. Введите ID новости снова:"
+                text="Новость с таким ID не найдена. Введите ID новости снова:"
             )
             return
 
         user_temp_data[user_id] = {"news_id": news_id, "current_news": news_item}
 
         confirmation_text = (
-            f"🆔 ID: {news_item['id']}\n"
-            f"📰 Заголовок: {news_item['title']}\n"
-            f"📅 Дата: {news_item['publication_date']}\n\n"
-            f"📝 Текст: {news_item['description'][:100]}..."
+            f"ID: {news_item['id']}\n"
+            f"Заголовок: {news_item['title']}\n"
+            f"Дата: {news_item['publication_date']}\n\n"
+            f"Текст: {news_item['description'][:100]}..."
             if len(news_item['description']) > 100
-            else f"📝 Текст: {news_item['description']}"
+            else f"Текст: {news_item['description']}"
         )
 
         await event.bot.send_message(chat_id=event.chat.chat_id, text=confirmation_text)
 
         builder = InlineKeyboardBuilder()
         builder.row(
-            CallbackButton(text="✏️ Заголовок", payload="edit_news_title"),
-            CallbackButton(text="📝 Текст", payload="edit_news_description")
+            CallbackButton(text="Заголовок", payload="edit_news_title"),
+            CallbackButton(text="Текст", payload="edit_news_description")
         )
         builder.row(
-            CallbackButton(text="📰 Заголовок и текст", payload="edit_news_both"),
-            CallbackButton(text="❌ Отмена", payload="cancel_news_edit")
+            CallbackButton(text="Заголовок и текст", payload="edit_news_both"),
+            CallbackButton(text="Отмена", payload="cancel_news_edit")
         )
 
         await event.bot.send_message(
@@ -593,7 +593,7 @@ async def handle_waiting_news_id_for_edit(event: MessageCreated, user_id: int, u
     except ValueError:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ ID должен быть числом. Введите ID новости снова:"
+            text="ID должен быть числом. Введите ID новости снова:"
         )
 
 
@@ -611,13 +611,13 @@ async def handle_waiting_news_title_edit(event: MessageCreated, user_id: int, us
 
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text=f"✅ Заголовок новости успешно обновлен!\n\nНовый заголовок: {new_title}"
+                text=f"Заголовок новости успешно обновлен!\n\nНовый заголовок: {new_title}"
             )
             await show_menu(event.chat.chat_id, user_id, event.bot)
         else:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Ошибка при обновлении заголовка."
+                text="Ошибка при обновлении заголовка."
             )
 
     cleanup_user_state(user_id)
@@ -636,16 +636,16 @@ async def handle_waiting_news_description_edit(event: MessageCreated, user_id: i
             await update_news_messages(event.bot, updated_news)
 
             message = (
-                f"✅ Текст новости успешно обновлен!\n\nНовый текст: {new_description[:100]}..."
+                f"Текст новости успешно обновлен!\n\nНовый текст: {new_description[:100]}..."
                 if len(new_description) > 100
-                else f"✅ Текст новости успешно обновлен!\n\nНовый текст: {new_description}"
+                else f"Текст новости успешно обновлен!\n\nНовый текст: {new_description}"
             )
             await event.bot.send_message(chat_id=event.chat.chat_id, text=message)
             await show_menu(event.chat.chat_id, user_id, event.bot)
         else:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Ошибка при обновлении текста."
+                text="Ошибка при обновлении текста."
             )
 
     cleanup_user_state(user_id)
@@ -657,7 +657,7 @@ async def handle_waiting_news_title_edit_both(event: MessageCreated, user_id: in
     user_states[user_id] = "waiting_news_description_edit_both"
     await event.bot.send_message(
         chat_id=event.chat.chat_id,
-        text="✅ Новый заголовок сохранен. Теперь введите новый текст новости:"
+        text="Новый заголовок сохранен. Теперь введите новый текст новости:"
     )
 
 
@@ -675,16 +675,16 @@ async def handle_waiting_news_description_edit_both(event: MessageCreated, user_
             await update_news_messages(event.bot, updated_news)
 
             message = (
-                f"✅ Новость полностью обновлена!\n\nНовый заголовок: {new_title}\n\nНовый текст: {new_description[:100]}..."
+                f"Новость полностью обновлена!\n\nНовый заголовок: {new_title}\n\nНовый текст: {new_description[:100]}..."
                 if len(new_description) > 100
-                else f"✅ Новость полностью обновлена!\n\nНовый заголовок: {new_title}\n\nНовый текст: {new_description}"
+                else f"Новость полностью обновлена!\n\nНовый заголовок: {new_title}\n\nНовый текст: {new_description}"
             )
             await event.bot.send_message(chat_id=event.chat.chat_id, text=message)
             await show_menu(event.chat.chat_id, user_id, event.bot)
         else:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Ошибка при обновлении новости."
+                text="Ошибка при обновлении новости."
             )
 
     cleanup_user_state(user_id)
@@ -698,24 +698,24 @@ async def handle_waiting_news_id_for_delete(event: MessageCreated, user_id: int,
         if not news_item:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Новость с таким ID не найдена. Введите ID новости снова:"
+                text="Новость с таким ID не найдена. Введите ID новости снова:"
             )
             return
 
         confirmation_text = (
-            f"❓ Вы уверены, что хотите удалить эту новость?\n\n"
-            f"🆔 ID: {news_item['id']}\n"
-            f"📰 Заголовок: {news_item['title']}\n"
-            f"📅 Дата: {news_item['publication_date']}\n\n"
-            f"📝 Текст: {news_item['description'][:100]}..."
+            f"Вы уверены, что хотите удалить эту новость?\n\n"
+            f"ID: {news_item['id']}\n"
+            f"Заголовок: {news_item['title']}\n"
+            f"Дата: {news_item['publication_date']}\n\n"
+            f"Текст: {news_item['description'][:100]}..."
             if len(news_item['description']) > 100
-            else f"📝 Текст: {news_item['description']}"
+            else f"Текст: {news_item['description']}"
         )
 
         builder = InlineKeyboardBuilder()
         builder.row(
-            CallbackButton(text="✅ Да, удалить", payload=f"confirm_delete_news_{news_id}"),
-            CallbackButton(text="❌ Нет, отмена", payload="cancel_delete_news")
+            CallbackButton(text="Да, удалить", payload=f"confirm_delete_news_{news_id}"),
+            CallbackButton(text="Нет, отмена", payload="cancel_delete_news")
         )
 
         await event.bot.send_message(
@@ -728,7 +728,7 @@ async def handle_waiting_news_id_for_delete(event: MessageCreated, user_id: int,
     except ValueError:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ ID должен быть числом. Введите ID новости снова:"
+            text="ID должен быть числом. Введите ID новости снова:"
         )
 
 
@@ -739,7 +739,7 @@ async def handle_waiting_news_title(event: MessageCreated, user_id: int, user_in
 
     await event.bot.send_message(
         chat_id=event.chat.chat_id,
-        text="✅ Заголовок сохранен. Теперь введите текст новости одним сообщением:"
+        text="Заголовок сохранен. Теперь введите текст новости одним сообщением:"
     )
 
 
@@ -751,7 +751,7 @@ async def handle_waiting_news_description(event: MessageCreated, user_id: int, u
     description = user_temp_data[user_id]["description"]
 
     preview_text = (
-        f"📰 Предпросмотр новости ВУЗа\n\n"
+        f"Предпросмотр новости ВУЗа\n\n"
         f"Заголовок: {title}\n\n"
         f"Текст:\n{description}\n\n"
         "---\nВыберите действие:"
@@ -759,9 +759,9 @@ async def handle_waiting_news_description(event: MessageCreated, user_id: int, u
 
     builder = InlineKeyboardBuilder()
     builder.row(
-        CallbackButton(text="📤 Разослать", payload="publish_news"),
-        CallbackButton(text="✏️ Редактировать", payload="edit_news"),
-        CallbackButton(text="❌ Отмена", payload="cancel_news")
+        CallbackButton(text="Разослать", payload="publish_news"),
+        CallbackButton(text="Редактировать", payload="edit_news"),
+        CallbackButton(text="Отмена", payload="cancel_news")
     )
 
     await event.bot.send_message(
@@ -780,7 +780,7 @@ async def handle_waiting_full_name(event: MessageCreated, user_id: int, user_inp
 
     await event.bot.send_message(
         chat_id=event.chat.chat_id,
-        text="✅ ФИО сохранено. Теперь введите вашу группу (Например: ИУК4-31Б):"
+        text="ФИО сохранено. Теперь введите вашу группу (Например: ИУК4-31Б):"
     )
 
 
@@ -791,7 +791,7 @@ async def handle_waiting_group(event: MessageCreated, user_id: int, user_input: 
 
     await event.bot.send_message(
         chat_id=event.chat.chat_id,
-        text="✅ Группа сохранена. Теперь введите количество справок:"
+        text="Группа сохранена. Теперь введите количество справок:"
     )
 
 
@@ -816,7 +816,7 @@ async def handle_waiting_problem_description(event: MessageCreated, user_id: int
     if not number_room:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ Не указан номер комнаты. Начните заново."
+            text="Не указан номер комнаты. Начните заново."
         )
         cleanup_user_state(user_id)
         return
@@ -834,12 +834,12 @@ async def handle_waiting_problem_description(event: MessageCreated, user_id: int
     if complaint_id:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text=f"✅ Заявка отправлена!\nID: {complaint_id}\nКомната: {number_room}\nПроблема: {description}"
+            text=f"Заявка отправлена!\nID: {complaint_id}\nКомната: {number_room}\nПроблема: {description}"
         )
     else:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ Ошибка при отправке заявки. Попробуйте ещё раз."
+            text="Ошибка при отправке заявки. Попробуйте ещё раз."
         )
 
 
@@ -860,7 +860,7 @@ async def handle_waiting_pass_birthdate(event: MessageCreated, user_id: int, use
     if not re.match(pattern, user_input):
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ Формат даты: ДД.ММ.ГГГГ (Например: 17.04.2005). Введите снова:"
+            text="Формат даты: ДД.ММ.ГГГГ (Например: 17.04.2005). Введите снова:"
         )
         return
 
@@ -895,7 +895,7 @@ async def handle_waiting_pass_reason(event: MessageCreated, user_id: int, user_i
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
             text=(
-                f"✅ Заявка на пропуск отправлена!\n"
+                f"Заявка на пропуск отправлена!\n"
                 f"Группа: {user_group}\n"
                 f"Дата рождения: {date_of_birthday}\n"
                 f"Причина: {reason}"
@@ -904,7 +904,7 @@ async def handle_waiting_pass_reason(event: MessageCreated, user_id: int, user_i
     else:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ Ошибка при отправке заявки."
+            text="Ошибка при отправке заявки."
         )
 
 
@@ -917,12 +917,12 @@ async def handle_waiting_reply_text(event: MessageCreated, user_id: int, user_in
     cleanup_user_state(user_id)
 
     if not complaint:
-        await event.bot.send_message(chat_id=event.chat.chat_id, text="❌ Жалоба не найдена.")
+        await event.bot.send_message(chat_id=event.chat.chat_id, text="Жалоба не найдена.")
         return
 
     await event.bot.send_message(
         chat_id=complaint["chat_id"],
-        text=f"✅ Ваше обращение рассмотрено.\nОтвет: {reply_text}"
+        text=f"Ваше обращение рассмотрено.\nОтвет: {reply_text}"
     )
 
     student_complaints.delete_complaint(complaint_id)
@@ -943,12 +943,12 @@ async def handle_waiting_pass_reply(event: MessageCreated, user_id: int, user_in
     target = next((r for r in all_requests if r["id"] == request_id), None)
 
     if not target:
-        await event.bot.send_message(chat_id=event.chat.chat_id, text="❌ Заявка не найдена.")
+        await event.bot.send_message(chat_id=event.chat.chat_id, text="Заявка не найдена.")
         return
 
     await event.bot.send_message(
         chat_id=target["chat_id"],
-        text=f"✅ Ваше обращение рассмотрено.\nОтвет: {reply_text}"
+        text=f"Ваше обращение рассмотрено.\nОтвет: {reply_text}"
     )
 
     dormitory_requests.delete_request(request_id)
@@ -965,13 +965,13 @@ async def handle_waiting_count(event: MessageCreated, user_id: int, user_input: 
         if count <= 0:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Количество должно быть положительным числом. Введите количество справок:"
+                text="Количество должно быть положительным числом. Введите количество справок:"
             )
             return
         if count > 5:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Максимальное количество справок - 5. Введите количество справок:"
+                text="Максимальное количество справок - 5. Введите количество справок:"
             )
             return
 
@@ -982,7 +982,7 @@ async def handle_waiting_count(event: MessageCreated, user_id: int, user_input: 
         if not full_name or not group_name:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Ошибка: данные не сохранены. Начните заново."
+                text="Ошибка: данные не сохранены. Начните заново."
             )
             cleanup_user_state(user_id)
             return
@@ -1001,24 +1001,24 @@ async def handle_waiting_count(event: MessageCreated, user_id: int, user_input: 
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
                 text=(
-                    f"✅ Заявка на справку успешно создана!\n\n"
-                    f"📋 Данные заявки:\n"
-                    f"👤 ФИО: {full_name}\n"
-                    f"🎓 Группа: {group_name}\n"
-                    f"📄 Количество справок: {count}"
+                    f"Заявка на справку успешно создана!\n\n"
+                    f"Данные заявки:\n"
+                    f"ФИО: {full_name}\n"
+                    f"Группа: {group_name}\n"
+                    f"Количество справок: {count}"
                 )
             )
             await show_menu(event.chat.chat_id, user_id, event.bot)
         else:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Произошла ошибка при создании заявки. Попробуйте позже."
+                text="Произошла ошибка при создании заявки. Попробуйте позже."
             )
 
     except ValueError:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ Количество должно быть числом. Введите количество справок:"
+            text="Количество должно быть числом. Введите количество справок:"
         )
 
 
@@ -1030,14 +1030,14 @@ async def handle_waiting_blacklist_user_id(event: MessageCreated, user_id: int, 
         if not users.is_user_exists(target_user_id):
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Пользователь с таким ID не найден в базе. Введите ID пользователя снова:"
+                text="Пользователь с таким ID не найден в базе. Введите ID пользователя снова:"
             )
             return
 
         if black_list.is_in_blacklist(target_user_id):
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Этот пользователь уже находится в черном списке. Введите другой ID:"
+                text="Этот пользователь уже находится в черном списке. Введите другой ID:"
             )
             return
 
@@ -1046,13 +1046,13 @@ async def handle_waiting_blacklist_user_id(event: MessageCreated, user_id: int, 
 
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="✅ ID пользователя принят. Теперь введите причину добавления в черный список:"
+            text="ID пользователя принят. Теперь введите причину добавления в черный список:"
         )
 
     except ValueError:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ ID должен быть числом. Введите ID пользователя снова:"
+            text="ID должен быть числом. Введите ID пользователя снова:"
         )
 
 
@@ -1065,7 +1065,7 @@ async def handle_waiting_blacklist_reason(event: MessageCreated, user_id: int, u
     if not target_user_id:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ Ошибка: данные не найдены. Начните заново."
+            text="Ошибка: данные не найдены. Начните заново."
         )
         cleanup_user_state(user_id)
         return
@@ -1075,20 +1075,20 @@ async def handle_waiting_blacklist_reason(event: MessageCreated, user_id: int, u
     if success:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text=f"✅ Пользователь {target_user_id} успешно добавлен в черный список!\n\nПричина: {reason}"
+            text=f"Пользователь {target_user_id} успешно добавлен в черный список!\n\nПричина: {reason}"
         )
 
         try:
             await event.bot.send_message(
                 user_id=target_user_id,
-                text=f"❌ Вы были добавлены в черный список бота.\nПричина: {reason}"
+                text=f"Вы были добавлены в черный список бота.\nПричина: {reason}"
             )
         except Exception as e:
             logging.error(f"Не удалось уведомить пользователя {target_user_id}: {e}")
     else:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ Произошла ошибка при добавлении в черный список. Попробуйте позже."
+            text="Произошла ошибка при добавлении в черный список. Попробуйте позже."
         )
 
     cleanup_user_state(user_id)
@@ -1103,7 +1103,7 @@ async def handle_waiting_blacklist_remove_id(event: MessageCreated, user_id: int
         if not black_list.is_in_blacklist(target_user_id):
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Пользователь с таким ID не найден в черном списке. Введите ID снова:"
+                text="Пользователь с таким ID не найден в черном списке. Введите ID снова:"
             )
             return
 
@@ -1112,20 +1112,20 @@ async def handle_waiting_blacklist_remove_id(event: MessageCreated, user_id: int
         if success:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text=f"✅ Пользователь {target_user_id} успешно удален из черного списка!"
+                text=f"Пользователь {target_user_id} успешно удален из черного списка!"
             )
 
             try:
                 await event.bot.send_message(
                     user_id=target_user_id,
-                    text="✅ Вы были удалены из черного списка бота. Теперь вы можете использовать бота снова."
+                    text="Вы были удалены из черного списка бота. Теперь вы можете использовать бота снова."
                 )
             except Exception as e:
                 logging.error(f"Не удалось уведомить пользователя {target_user_id}: {e}")
         else:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Произошла ошибка при удалении из черного списка. Попробуйте позже."
+                text="Произошла ошибка при удалении из черного списка. Попробуйте позже."
             )
 
         cleanup_user_state(user_id)
@@ -1134,7 +1134,7 @@ async def handle_waiting_blacklist_remove_id(event: MessageCreated, user_id: int
     except ValueError:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ ID должен быть числом. Введите ID пользователя снова:"
+            text="ID должен быть числом. Введите ID пользователя снова:"
         )
 
 
@@ -1153,12 +1153,12 @@ async def handle_waiting_unban_description(event: MessageCreated, user_id: int, 
     if success:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="✅ Ваша заявка на разбан отправлена на рассмотрение. Мы уведомим вас о решении."
+            text="Ваша заявка на разбан отправлена на рассмотрение. Мы уведомим вас о решении."
         )
     else:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ У вас уже есть активная заявка на разбан. Дождитесь ее рассмотрения."
+            text="У вас уже есть активная заявка на разбан. Дождитесь ее рассмотрения."
         )
 
     cleanup_user_state(user_id)
@@ -1181,19 +1181,19 @@ async def handle_waiting_unban_reject_reason(event: MessageCreated, user_id: int
             try:
                 await event.bot.send_message(
                     user_id=request['user_id'],
-                    text=f"❌ Ваша заявка на разбан отклонена.\nПричина: {reject_reason}"
+                    text=f"Ваша заявка на разбан отклонена.\nПричина: {reject_reason}"
                 )
             except Exception as e:
                 logging.error(f"Не удалось уведомить пользователя {request['user_id']}: {e}")
 
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text=f"✅ Заявка на разбан отклонена. Пользователь уведомлен."
+            text=f"Заявка на разбан отклонена. Пользователь уведомлен."
         )
     else:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ Ошибка при отклонении заявки. Возможно, заявка уже обработана."
+            text="Ошибка при отклонении заявки. Возможно, заявка уже обработана."
         )
 
     cleanup_user_state(user_id)
@@ -1203,7 +1203,7 @@ async def handle_waiting_unban_reject_reason(event: MessageCreated, user_id: int
         current_index = current_unban_request_index.get(event.chat.chat_id, 0)
         await show_next_unban_request(event.chat.chat_id, event.bot, current_index)
     else:
-        await event.bot.send_message(chat_id=event.chat.chat_id, text="📭 Заявки на разбан закончились!")
+        await event.bot.send_message(chat_id=event.chat.chat_id, text="Заявки на разбан закончились!")
         await show_menu(event.chat.chat_id, user_id, event.bot)
 
 
@@ -1214,7 +1214,7 @@ async def handle_waiting_event_title(event: MessageCreated, user_id: int, user_i
 
     await event.bot.send_message(
         chat_id=event.chat.chat_id,
-        text="✅ Заголовок сохранен. Теперь введите описание события:"
+        text="Заголовок сохранен. Теперь введите описание события:"
     )
 
 
@@ -1225,7 +1225,7 @@ async def handle_waiting_event_description(event: MessageCreated, user_id: int, 
 
     await event.bot.send_message(
         chat_id=event.chat.chat_id,
-        text="✅ Описание сохранено. Теперь введите дату и время события (формат: ДД.ММ.ГГГГ ЧЧ:ММ):"
+        text="Описание сохранено. Теперь введите дату и время события (формат: ДД.ММ.ГГГГ ЧЧ:ММ):"
     )
 
 
@@ -1236,7 +1236,7 @@ async def handle_waiting_event_date(event: MessageCreated, user_id: int, user_in
 
     await event.bot.send_message(
         chat_id=event.chat.chat_id,
-        text="✅ Дата сохранена. Теперь введите место проведения события:"
+        text="Дата сохранена. Теперь введите место проведения события:"
     )
 
 
@@ -1251,7 +1251,7 @@ async def handle_waiting_event_location(event: MessageCreated, user_id: int, use
     if not all([title, description, event_date, location]):
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ Ошибка: данные не сохранены. Начните заново."
+            text="Ошибка: данные не сохранены. Начните заново."
         )
         cleanup_user_state(user_id)
         return
@@ -1262,17 +1262,17 @@ async def handle_waiting_event_location(event: MessageCreated, user_id: int, use
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
             text=(
-                f"✅ Событие успешно добавлено!\n\n"
+                f"Событие успешно добавлено!\n\n"
                 f"{title}\n"
-                f"📅 {event_date}\n"
-                f"📍 {location}\n\n"
+                f"{event_date}\n"
+                f"{location}\n\n"
                 f"{description}"
             )
         )
     else:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ Ошибка при добавлении события. Попробуйте позже."
+            text="Ошибка при добавлении события. Попробуйте позже."
         )
 
     cleanup_user_state(user_id)
@@ -1287,34 +1287,34 @@ async def handle_waiting_event_id_for_edit(event: MessageCreated, user_id: int, 
         if not event_item:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Событие с таким ID не найдено. Введите ID события снова:"
+                text="Событие с таким ID не найдено. Введите ID события снова:"
             )
             return
 
         user_temp_data[user_id] = {"event_id": event_id, "current_event": event_item}
 
         confirmation_text = (
-            f"🆔 ID: {event_item['id']}\n"
-            f"📰 Заголовок: {event_item['title']}\n"
-            f"📝 Описание: {event_item['description']}\n"
-            f"📅 Дата: {event_item['event_date']}\n"
-            f"📍 Место: {event_item['location']}\n"
+            f"ID: {event_item['id']}\n"
+            f"Заголовок: {event_item['title']}\n"
+            f"Описание: {event_item['description']}\n"
+            f"Дата: {event_item['event_date']}\n"
+            f"Место: {event_item['location']}\n"
         )
 
         await event.bot.send_message(chat_id=event.chat.chat_id, text=confirmation_text)
 
         builder = InlineKeyboardBuilder()
         builder.row(
-            CallbackButton(text="✏️ Заголовок", payload="edit_event_title"),
-            CallbackButton(text="📝 Описание", payload="edit_event_description")
+            CallbackButton(text="Заголовок", payload="edit_event_title"),
+            CallbackButton(text="Описание", payload="edit_event_description")
         )
         builder.row(
-            CallbackButton(text="📅 Дата", payload="edit_event_date"),
-            CallbackButton(text="📍 Место", payload="edit_event_location")
+            CallbackButton(text="Дата", payload="edit_event_date"),
+            CallbackButton(text="Место", payload="edit_event_location")
         )
         builder.row(
-            CallbackButton(text="📝 Все поля", payload="edit_event_all"),
-            CallbackButton(text="❌ Отмена", payload="cancel_event_edit")
+            CallbackButton(text="Все поля", payload="edit_event_all"),
+            CallbackButton(text="Отмена", payload="cancel_event_edit")
         )
 
         await event.bot.send_message(
@@ -1329,7 +1329,7 @@ async def handle_waiting_event_id_for_edit(event: MessageCreated, user_id: int, 
     except ValueError:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ ID должен быть числом. Введите ID события снова:"
+            text="ID должен быть числом. Введите ID события снова:"
         )
 
 
@@ -1341,22 +1341,22 @@ async def handle_waiting_event_id_for_delete(event: MessageCreated, user_id: int
         if not event_item:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Событие с таким ID не найдено. Введите ID события снова:"
+                text="Событие с таким ID не найдено. Введите ID события снова:"
             )
             return
 
         confirmation_text = (
-            f"❓ Вы уверены, что хотите удалить это событие?\n\n"
-            f"🆔 ID: {event_item['id']}\n"
-            f"📰 Заголовок: {event_item['title']}\n"
-            f"📅 Дата: {event_item['event_date']}\n"
-            f"📍 Место: {event_item['location']}\n"
+            f"Вы уверены, что хотите удалить это событие?\n\n"
+            f"ID: {event_item['id']}\n"
+            f"Заголовок: {event_item['title']}\n"
+            f"Дата: {event_item['event_date']}\n"
+            f"Место: {event_item['location']}\n"
         )
 
         builder = InlineKeyboardBuilder()
         builder.row(
-            CallbackButton(text="✅ Да, удалить", payload=f"confirm_delete_event_{event_id}"),
-            CallbackButton(text="❌ Нет, отмена", payload="cancel_delete_event")
+            CallbackButton(text="Да, удалить", payload=f"confirm_delete_event_{event_id}"),
+            CallbackButton(text="Нет, отмена", payload="cancel_delete_event")
         )
 
         await event.bot.send_message(
@@ -1370,7 +1370,7 @@ async def handle_waiting_event_id_for_delete(event: MessageCreated, user_id: int
     except ValueError:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text="❌ ID должен быть числом. Введите ID события снова:"
+            text="ID должен быть числом. Введите ID события снова:"
         )
 
 
@@ -1385,12 +1385,12 @@ async def handle_waiting_event_title_edit(event: MessageCreated, user_id: int, u
         if success:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text=f"✅ Заголовок события успешно обновлен!\n\nНовый заголовок: {new_title}"
+                text=f"Заголовок события успешно обновлен!\n\nНовый заголовок: {new_title}"
             )
         else:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Ошибка при обновлении заголовка."
+                text="Ошибка при обновлении заголовка."
             )
 
     cleanup_user_state(user_id)
@@ -1408,12 +1408,12 @@ async def handle_waiting_event_description_edit(event: MessageCreated, user_id: 
         if success:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text=f"✅ Описание события успешно обновлено!\n\nНовое описание: {new_description}"
+                text=f"Описание события успешно обновлено!\n\nНовое описание: {new_description}"
             )
         else:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Ошибка при обновлении описания."
+                text="Ошибка при обновлении описания."
             )
 
     cleanup_user_state(user_id)
@@ -1431,12 +1431,12 @@ async def handle_waiting_event_date_edit(event: MessageCreated, user_id: int, us
         if success:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text=f"✅ Дата события успешно обновлена!\n\nНовая дата: {new_date}"
+                text=f"Дата события успешно обновлена!\n\nНовая дата: {new_date}"
             )
         else:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Ошибка при обновлении даты."
+                text="Ошибка при обновлении даты."
             )
 
     cleanup_user_state(user_id)
@@ -1454,12 +1454,12 @@ async def handle_waiting_event_location_edit(event: MessageCreated, user_id: int
         if success:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text=f"✅ Место события успешно обновлено!\n\nНовое место: {new_location}"
+                text=f"Место события успешно обновлено!\n\nНовое место: {new_location}"
             )
         else:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Ошибка при обновлении места."
+                text="Ошибка при обновлении места."
             )
 
     cleanup_user_state(user_id)
@@ -1473,7 +1473,7 @@ async def handle_waiting_event_title_edit_all(event: MessageCreated, user_id: in
 
     await event.bot.send_message(
         chat_id=event.chat.chat_id,
-        text="✅ Новый заголовок сохранен. Теперь введите новое описание события:"
+        text="Новый заголовок сохранен. Теперь введите новое описание события:"
     )
 
 
@@ -1484,7 +1484,7 @@ async def handle_waiting_event_description_edit_all(event: MessageCreated, user_
 
     await event.bot.send_message(
         chat_id=event.chat.chat_id,
-        text="✅ Новое описание сохранено. Теперь введите новую дату события (формат: ДД.ММ.ГГГГ ЧЧ:ММ):"
+        text="Новое описание сохранено. Теперь введите новую дату события (формат: ДД.ММ.ГГГГ ЧЧ:ММ):"
     )
 
 
@@ -1495,7 +1495,7 @@ async def handle_waiting_event_date_edit_all(event: MessageCreated, user_id: int
 
     await event.bot.send_message(
         chat_id=event.chat.chat_id,
-        text="✅ Новая дата сохранена. Теперь введите новое место проведения события:"
+        text="Новая дата сохранена. Теперь введите новое место проведения события:"
     )
 
 
@@ -1520,7 +1520,7 @@ async def handle_waiting_event_location_edit_all(event: MessageCreated, user_id:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
                 text=(
-                    f"✅ Событие полностью обновлено!\n\n"
+                    f"Событие полностью обновлено!\n\n"
                     f"Новый заголовок: {new_title}\n\n"
                     f"Новое описание: {new_description}\n\n"
                     f"Новая дата: {new_date}\n\n"
@@ -1530,7 +1530,7 @@ async def handle_waiting_event_location_edit_all(event: MessageCreated, user_id:
         else:
             await event.bot.send_message(
                 chat_id=event.chat.chat_id,
-                text="❌ Ошибка при обновлении события."
+                text="Ошибка при обновлении события."
             )
 
     cleanup_user_state(user_id)
@@ -1723,7 +1723,7 @@ async def handle_information_about_training(callback, chat_id, user_id):
     user_states[user_id] = "waiting_full_name"
     await callback.bot.send_message(
         chat_id=chat_id,
-        text="📝 Заполните данные для заявки на справку об обучении.\n\nВведите ваше ФИО (Например: Иванов Иван Иванович):"
+        text="Заполните данные для заявки на справку об обучении.\n\nВведите ваше ФИО (Например: Иванов Иван Иванович):"
     )
 
 
@@ -1773,7 +1773,7 @@ async def handle_subscribe_news(callback, chat_id, user_id):
 
     await callback.bot.send_message(
         chat_id=chat_id,
-        text=f"Подписка на новости ВУЗа: {'✅ Подписан' if mailing_university else '❌ Не подписан'}",
+        text=f"Подписка на новости ВУЗа: {'Подписан' if mailing_university else 'Не подписан'}",
         attachments=[builder.as_markup()]
     )
 
@@ -1785,7 +1785,7 @@ async def handle_subscribe_news(callback, chat_id, user_id):
 
     await callback.bot.send_message(
         chat_id=chat_id,
-        text=f"Подписка на новости Общежития: {'✅ Подписан' if mailing_dormitory else '❌ Не подписан'}",
+        text=f"Подписка на новости Общежития: {'Подписан' if mailing_dormitory else 'Не подписан'}",
         attachments=[builder.as_markup()]
     )
 
@@ -1808,7 +1808,7 @@ async def handle_subscribe_news_university(callback, chat_id, user_id):
 
     await callback.bot.send_message(
         chat_id=chat_id,
-        text=f"Подписка на новости ВУЗа: {'✅ Подписан' if new_status else '❌ Не подписан'}",
+        text=f"Подписка на новости ВУЗа: {'Подписан' if new_status else 'Не подписан'}",
         attachments=[builder.as_markup()]
     )
     await show_menu(chat_id, user_id, callback.bot)
@@ -1832,7 +1832,7 @@ async def handle_subscribe_news_dormitory(callback, chat_id, user_id):
 
     await callback.bot.send_message(
         chat_id=chat_id,
-        text=f"Подписка на новости Общежития: {'✅ Подписан' if new_status else '❌ Не подписан'}",
+        text=f"Подписка на новости Общежития: {'Подписан' if new_status else 'Не подписан'}",
         attachments=[builder.as_markup()]
     )
     await show_menu(chat_id, user_id, callback.bot)
@@ -1841,20 +1841,20 @@ async def handle_subscribe_news_dormitory(callback, chat_id, user_id):
 async def handle_add_news(callback, chat_id, user_id):
     user_states[user_id] = "waiting_news_title"
     user_temp_data[user_id] = {}
-    await callback.bot.send_message(chat_id=chat_id, text="📝 Введите заголовок новости ВУЗа:")
+    await callback.bot.send_message(chat_id=chat_id, text="Введите заголовок новости ВУЗа:")
 
 
 async def handle_delete_news(callback, chat_id, user_id):
     all_news = news.get_all_news()
     if not all_news:
-        await callback.bot.send_message(chat_id=chat_id, text="❌ Новостей для удаления не найдено.")
+        await callback.bot.send_message(chat_id=chat_id, text="Новостей для удаления не найдено.")
         return
 
-    news_list_text = "📋 Список всех новостей ВУЗа:\n\n"
+    news_list_text = "Список всех новостей ВУЗа:\n\n"
     for news_item in all_news:
-        news_list_text += f"🆔 ID: {news_item['id']}\n"
-        news_list_text += f"📰 Заголовок: {news_item['title']}\n"
-        news_list_text += f"📅 Дата: {news_item['publication_date']}\n"
+        news_list_text += f"ID: {news_item['id']}\n"
+        news_list_text += f"Заголовок: {news_item['title']}\n"
+        news_list_text += f"Дата: {news_item['publication_date']}\n"
         news_list_text += "─" * 30 + "\n"
 
     await callback.bot.send_message(chat_id=chat_id, text=news_list_text)
@@ -1866,14 +1866,14 @@ async def handle_delete_news(callback, chat_id, user_id):
 async def handle_reedit_news(callback, chat_id, user_id):
     all_news = news.get_all_news()
     if not all_news:
-        await callback.bot.send_message(chat_id=chat_id, text="❌ Новостей для редактирования не найдено.")
+        await callback.bot.send_message(chat_id=chat_id, text="Новостей для редактирования не найдено.")
         return
 
-    news_list_text = "📋 Список всех новостей ВУЗа:\n\n"
+    news_list_text = "Список всех новостей ВУЗа:\n\n"
     for news_item in all_news:
-        news_list_text += f"🆔 ID: {news_item['id']}\n"
-        news_list_text += f"📰 Заголовок: {news_item['title']}\n"
-        news_list_text += f"📅 Дата: {news_item['publication_date']}\n"
+        news_list_text += f"ID: {news_item['id']}\n"
+        news_list_text += f"Заголовок: {news_item['title']}\n"
+        news_list_text += f"Дата: {news_item['publication_date']}\n"
         news_list_text += "─" * 30 + "\n"
 
     await callback.bot.send_message(chat_id=chat_id, text=news_list_text)
@@ -1888,7 +1888,7 @@ async def handle_publish_news(callback, chat_id, user_id):
     description = user_data.get("description")
 
     if not title or not description:
-        await callback.bot.send_message(chat_id=chat_id, text="❌ Ошибка: данные новости не найдены.")
+        await callback.bot.send_message(chat_id=chat_id, text="Ошибка: данные новости не найдены.")
         return
 
     news_id = news.add_news(title, description, "university")
@@ -1897,7 +1897,7 @@ async def handle_publish_news(callback, chat_id, user_id):
         message_ids = []
 
         if subscribers:
-            news_text = f"📢 Новость ВУЗа\n\nЗаголовок: {title}\n\n{description}"
+            news_text = f"Новость ВУЗа\n\nЗаголовок: {title}\n\n{description}"
             for subscriber in subscribers:
                 try:
                     message = await callback.bot.send_message(
@@ -1912,7 +1912,7 @@ async def handle_publish_news(callback, chat_id, user_id):
 
         await callback.bot.send_message(
             chat_id=chat_id,
-            text=f"✅ Новость ВУЗа успешно опубликована и отправлена {len(subscribers)} подписчикам!"
+            text=f"Новость ВУЗа успешно опубликована и отправлена {len(subscribers)} подписчикам!"
         )
 
         if user_id in user_temp_data:
@@ -1920,17 +1920,17 @@ async def handle_publish_news(callback, chat_id, user_id):
 
         await show_menu(chat_id, user_id, callback.bot)
     else:
-        await callback.bot.send_message(chat_id=chat_id, text="❌ Ошибка при сохранении новости.")
+        await callback.bot.send_message(chat_id=chat_id, text="Ошибка при сохранении новости.")
 
 
 async def handle_edit_news(callback, chat_id, user_id):
     user_states[user_id] = "waiting_news_title"
-    await callback.bot.send_message(chat_id=chat_id, text="📝 Введите новый заголовок новости ВУЗа:")
+    await callback.bot.send_message(chat_id=chat_id, text="Введите новый заголовок новости ВУЗа:")
 
 
 async def handle_cancel_news(callback, chat_id, user_id):
     cleanup_user_state(user_id)
-    await callback.bot.send_message(chat_id=chat_id, text="❌ Создание новости отменено.")
+    await callback.bot.send_message(chat_id=chat_id, text="Создание новости отменено.")
     await show_menu(chat_id, user_id, callback.bot)
 
 
@@ -1951,7 +1951,7 @@ async def handle_edit_news_both(callback, chat_id, user_id):
 
 async def handle_cancel_news_edit(callback, chat_id, user_id):
     cleanup_user_state(user_id)
-    await callback.bot.send_message(chat_id=chat_id, text="❌ Редактирование новости отменено.")
+    await callback.bot.send_message(chat_id=chat_id, text="Редактирование новости отменено.")
     await show_menu(chat_id, user_id, callback.bot)
 
 
@@ -1966,14 +1966,14 @@ async def handle_add_user_to_black_list(callback, chat_id, user_id):
 async def handle_show_blacklist(callback, chat_id, user_id):
     blacklisted_users = black_list.get_all_blacklisted()
     if not blacklisted_users:
-        await callback.bot.send_message(chat_id=chat_id, text="📋 Черный список пуст.")
+        await callback.bot.send_message(chat_id=chat_id, text="Черный список пуст.")
         return
 
-    message_text = "📋 Черный список пользователей:\n\n"
+    message_text = "Черный список пользователей:\n\n"
     for user in blacklisted_users:
-        message_text += f"🆔 ID: {user['user_id']}\n"
-        message_text += f"📝 Причина: {user['reason']}\n"
-        message_text += f"📅 Дата добавления: {user['date_added']}\n"
+        message_text += f"ID: {user['user_id']}\n"
+        message_text += f"Причина: {user['reason']}\n"
+        message_text += f"Дата добавления: {user['date_added']}\n"
         message_text += "─" * 30 + "\n"
 
     await callback.bot.send_message(chat_id=chat_id, text=message_text)
@@ -1983,13 +1983,13 @@ async def handle_show_blacklist(callback, chat_id, user_id):
 async def handle_remove_from_blacklist(callback, chat_id, user_id):
     blacklisted_users = black_list.get_all_blacklisted()
     if not blacklisted_users:
-        await callback.bot.send_message(chat_id=chat_id, text="❌ Черный список пуст.")
+        await callback.bot.send_message(chat_id=chat_id, text="Черный список пуст.")
         return
 
-    message_text = "📋 Пользователи в черном списке:\n\n"
+    message_text = "Пользователи в черном списке:\n\n"
     for user in blacklisted_users:
-        message_text += f"🆔 ID: {user['user_id']}\n"
-        message_text += f"📝 Причина: {user['reason']}\n\n"
+        message_text += f"ID: {user['user_id']}\n"
+        message_text += f"Причина: {user['reason']}\n\n"
 
     await callback.bot.send_message(chat_id=chat_id, text=message_text)
 
@@ -2022,39 +2022,39 @@ async def handle_remove_role(callback, chat_id, user_id):
     smm_users = users.get_users_by_role("smm")
     head_dormitory_users = users.get_users_by_role("head_dormitory")
 
-    message_text = "📋 Пользователи с ролями:\n\n"
+    message_text = "Пользователи с ролями:\n\n"
 
     if admin_users:
-        message_text += "👑 Админы:\n"
+        message_text += "Админы:\n"
         for user in admin_users:
             message_text += f"• ID: {user['id']}\n"
         message_text += "\n"
 
     if dean_users:
-        message_text += "🎓 Деканат:\n"
+        message_text += "Деканат:\n"
         for user in dean_users:
             message_text += f"• ID: {user['id']}\n"
         message_text += "\n"
 
     if smm_users:
-        message_text += "📱 SMM:\n"
+        message_text += "SMM:\n"
         for user in smm_users:
             message_text += f"• ID: {user['id']}\n"
         message_text += "\n"
 
     if head_dormitory_users:
-        message_text += "🏠 Заведующие общежитием:\n"
+        message_text += "Заведующие общежитием:\n"
         for user in head_dormitory_users:
             message_text += f"• ID: {user['id']}\n"
         message_text += "\n"
 
     if not admin_users and not dean_users and not smm_users and not head_dormitory_users:
-        message_text = "❌ Пользователей с ролями не найдено"
+        message_text = "Пользователей с ролями не найдено"
 
     await callback.bot.send_message(chat_id=chat_id, text=message_text)
 
     builder = InlineKeyboardBuilder()
-    builder.row(CallbackButton(text="❌ Отмена", payload="cancel_operation"))
+    builder.row(CallbackButton(text="Отмена", payload="cancel_operation"))
 
     user_temp_data[user_id] = {"action_type": "remove"}
     user_states[user_id] = "waiting_user_id"
@@ -2097,7 +2097,7 @@ async def handle_confirm_user(callback, chat_id, user_id):
         users.add_user(target_user_id, role)
         await callback.bot.send_message(chat_id=chat_id, text=f"Пользователю назначена роль {role}")
     else:
-        await callback.bot.send_message(chat_id=chat_id, text="❌ Ошибка: данные не найдены")
+        await callback.bot.send_message(chat_id=chat_id, text="Ошибка: данные не найдены")
 
     cleanup_user_state(user_id)
     await show_menu(chat_id, user_id, callback.bot)
@@ -2123,7 +2123,7 @@ async def handle_confirm_remove(callback, chat_id, user_id):
             text=f"Пользователю {target_user_id} удалена роль {current_role}"
         )
     else:
-        await callback.bot.send_message(chat_id=chat_id, text="❌ Ошибка: данные не найдены")
+        await callback.bot.send_message(chat_id=chat_id, text="Ошибка: данные не найдены")
 
     cleanup_user_state(user_id)
     await show_menu(chat_id, user_id, callback.bot)
@@ -2136,7 +2136,7 @@ async def handle_deny_remove(callback, chat_id, user_id):
 
 async def handle_cancel_operation(callback, chat_id, user_id):
     cleanup_user_state(user_id)
-    await callback.bot.send_message(chat_id=chat_id, text="❌ Операция отменена.")
+    await callback.bot.send_message(chat_id=chat_id, text="Операция отменена.")
     await show_menu(chat_id, user_id, callback.bot)
 
 
@@ -2145,17 +2145,17 @@ async def handle_future_events(callback, chat_id, user_id):
     if not upcoming_events:
         await callback.bot.send_message(
             chat_id=chat_id,
-            text="📅 На данный момент предстоящих событий нет. Следите за обновлениями!"
+            text="На данный момент предстоящих событий нет. Следите за обновлениями!"
         )
         return
 
-    message_text = "📅 Предстоящие события ВУЗа:\n\n"
+    message_text = "Предстоящие события ВУЗа:\n\n"
 
     for i, event in enumerate(upcoming_events, 1):
         message_text += f"{i}. {event['title']}\n"
-        message_text += f"📅 Когда: {event['event_date']}\n"
-        message_text += f"📍 Где: {event['location']}\n"
-        message_text += f"📝 Описание: {event['description']}\n"
+        message_text += f"Когда: {event['event_date']}\n"
+        message_text += f"Где: {event['location']}\n"
+        message_text += f"Описание: {event['description']}\n"
         message_text += "─" * 30 + "\n\n"
 
     await callback.bot.send_message(chat_id=chat_id, text=message_text)
@@ -2164,19 +2164,19 @@ async def handle_future_events(callback, chat_id, user_id):
 async def handle_manage_events(callback, chat_id, user_id):
     builder = InlineKeyboardBuilder()
     builder.row(
-        CallbackButton(text="➕ Добавить событие", payload="add_event"),
-        CallbackButton(text="📋 Список событий", payload="list_events")
+        CallbackButton(text="Добавить событие", payload="add_event"),
+        CallbackButton(text="Список событий", payload="list_events")
     )
     builder.row(
-        CallbackButton(text="✏️ Редактировать событие", payload="edit_event"),
-        CallbackButton(text="❌ Удалить событие", payload="delete_event")
+        CallbackButton(text="Редактировать событие", payload="edit_event"),
+        CallbackButton(text="Удалить событие", payload="delete_event")
     )
 
     events_count = events_db.get_events_count()
 
     await callback.bot.send_message(
         chat_id=chat_id,
-        text=f"📊 Статистика событий:\nВсего событий: {events_count}",
+        text=f"Статистика событий:\nВсего событий: {events_count}",
         attachments=[builder.as_markup()]
     )
 
@@ -2184,21 +2184,21 @@ async def handle_manage_events(callback, chat_id, user_id):
 async def handle_add_event(callback, chat_id, user_id):
     user_states[user_id] = "waiting_event_title"
     user_temp_data[user_id] = {}
-    await callback.bot.send_message(chat_id=chat_id, text="📝 Введите заголовок события:")
+    await callback.bot.send_message(chat_id=chat_id, text="Введите заголовок события:")
 
 
 async def handle_list_events(callback, chat_id, user_id):
     all_events = events_db.get_all_events(limit=10)
     if not all_events:
-        await callback.bot.send_message(chat_id=chat_id, text="📭 Событий пока нет.")
+        await callback.bot.send_message(chat_id=chat_id, text="Событий пока нет.")
         return
 
-    message_text = "📋 Все события:\n\n"
+    message_text = "Все события:\n\n"
     for event in all_events:
-        message_text += f"🆔 ID: {event['id']}\n"
-        message_text += f"📰 Заголовок: {event['title']}\n"
-        message_text += f"📅 Дата: {event['event_date']}\n"
-        message_text += f"📍 Место: {event['location']}\n"
+        message_text += f"ID: {event['id']}\n"
+        message_text += f"Заголовок: {event['title']}\n"
+        message_text += f"Дата: {event['event_date']}\n"
+        message_text += f"Место: {event['location']}\n"
         message_text += "─" * 30 + "\n"
 
     await callback.bot.send_message(chat_id=chat_id, text=message_text)
@@ -2207,14 +2207,14 @@ async def handle_list_events(callback, chat_id, user_id):
 async def handle_edit_event(callback, chat_id, user_id):
     all_events = events_db.get_all_events(limit=10)
     if not all_events:
-        await callback.bot.send_message(chat_id=chat_id, text="❌ Событий для редактирования не найдено.")
+        await callback.bot.send_message(chat_id=chat_id, text="Событий для редактирования не найдено.")
         return
 
-    events_list_text = "📋 Список всех событий:\n\n"
+    events_list_text = "Список всех событий:\n\n"
     for event in all_events:
-        events_list_text += f"🆔 ID: {event['id']}\n"
-        events_list_text += f"📰 Заголовок: {event['title']}\n"
-        events_list_text += f"📅 Дата: {event['event_date']}\n"
+        events_list_text += f"ID: {event['id']}\n"
+        events_list_text += f"Заголовок: {event['title']}\n"
+        events_list_text += f"Дата: {event['event_date']}\n"
         events_list_text += "─" * 30 + "\n"
 
     await callback.bot.send_message(chat_id=chat_id, text=events_list_text)
@@ -2226,14 +2226,14 @@ async def handle_edit_event(callback, chat_id, user_id):
 async def handle_delete_event(callback, chat_id, user_id):
     all_events = events_db.get_all_events(limit=10)
     if not all_events:
-        await callback.bot.send_message(chat_id=chat_id, text="❌ Событий для удаления не найдено.")
+        await callback.bot.send_message(chat_id=chat_id, text="Событий для удаления не найдено.")
         return
 
-    events_list_text = "📋 Список всех событий:\n\n"
+    events_list_text = "Список всех событий:\n\n"
     for event in all_events:
-        events_list_text += f"🆔 ID: {event['id']}\n"
-        events_list_text += f"📰 Заголовок: {event['title']}\n"
-        events_list_text += f"📅 Дата: {event['event_date']}\n"
+        events_list_text += f"ID: {event['id']}\n"
+        events_list_text += f"Заголовок: {event['title']}\n"
+        events_list_text += f"Дата: {event['event_date']}\n"
         events_list_text += "─" * 30 + "\n"
 
     await callback.bot.send_message(chat_id=chat_id, text=events_list_text)
@@ -2269,17 +2269,17 @@ async def handle_edit_event_all(callback, chat_id, user_id):
 
 async def handle_cancel_event_edit(callback, chat_id, user_id):
     cleanup_user_state(user_id)
-    await callback.bot.send_message(chat_id=chat_id, text="❌ Редактирование события отменено.")
+    await callback.bot.send_message(chat_id=chat_id, text="Редактирование события отменено.")
     await show_menu(chat_id, user_id, callback.bot)
 
 
 async def handle_cancel_delete_news(callback, chat_id, user_id):
-    await callback.bot.send_message(chat_id=chat_id, text="❌ Удаление новости отменено.")
+    await callback.bot.send_message(chat_id=chat_id, text="Удаление новости отменено.")
     await show_menu(chat_id, user_id, callback.bot)
 
 
 async def handle_cancel_delete_event(callback, chat_id, user_id):
-    await callback.bot.send_message(chat_id=chat_id, text="❌ Удаление события отменено.")
+    await callback.bot.send_message(chat_id=chat_id, text="Удаление события отменено.")
     await show_menu(chat_id, user_id, callback.bot)
 
 
@@ -2293,11 +2293,11 @@ async def handle_approve_dean(callback, payload, chat_id, user_id):
 
         await callback.bot.send_message(
             chat_id=chat_id,
-            text=f"✅ Заявка пользователя {user_id_payload} принята!"
+            text=f"Заявка пользователя {user_id_payload} принята!"
         )
         await callback.bot.send_message(
             user_id=user_id_payload,
-            text="✅ Вашу заявку приняли! Вам доступны новые возможности!"
+            text="Вашу заявку приняли! Вам доступны новые возможности!"
         )
 
         all_requests = request_dean.get_all_users()
@@ -2316,11 +2316,11 @@ async def handle_reject_dean(callback, payload, chat_id, user_id):
 
         await callback.bot.send_message(
             chat_id=chat_id,
-            text=f"❌ Заявка пользователя {user_id_payload} отклонена!"
+            text=f"Заявка пользователя {user_id_payload} отклонена!"
         )
         await callback.bot.send_message(
             user_id=user_id_payload,
-            text="❌ Вашу заявку отклонили!"
+            text="Вашу заявку отклонили!"
         )
 
         all_requests = request_dean.get_all_users()
@@ -2339,11 +2339,11 @@ async def handle_approve_study(callback, payload, chat_id, user_id):
 
         await callback.bot.send_message(
             chat_id=chat_id,
-            text=f"✅ Заявка студента {user_id_payload} принята!"
+            text=f"Заявка студента {user_id_payload} принята!"
         )
         await callback.bot.send_message(
             user_id=user_id_payload,
-            text="✅ Ваша справка готова к получению!"
+            text="Ваша справка готова к получению!"
         )
 
         all_requests = study_certificate_requests.get_all_requests()
@@ -2362,11 +2362,11 @@ async def handle_reject_study(callback, payload, chat_id, user_id):
 
         await callback.bot.send_message(
             chat_id=chat_id,
-            text=f"❌ Заявка студента {user_id_payload} отклонена!"
+            text=f"Заявка студента {user_id_payload} отклонена!"
         )
         await callback.bot.send_message(
             user_id=user_id_payload,
-            text="❌ Вам отказали в выдаче справки! Обратитесь в деканат!"
+            text="Вам отказали в выдаче справки! Обратитесь в деканат!"
         )
 
         all_requests = study_certificate_requests.get_all_requests()
@@ -2393,19 +2393,19 @@ async def handle_approve_unban(callback, payload, chat_id, user_id):
             try:
                 await callback.bot.send_message(
                     user_id=request['user_id'],
-                    text="✅ Ваша заявка на разбан одобрена! Теперь вы можете использовать бота."
+                    text="Ваша заявка на разбан одобрена! Теперь вы можете использовать бота."
                 )
             except Exception as e:
                 logging.error(f"Не удалось уведомить пользователя {request['user_id']}: {e}")
 
         await callback.bot.send_message(
             chat_id=chat_id,
-            text=f"✅ Заявка на разбан одобрена! Пользователь {request['user_id']} удален из черного списка."
+            text=f"Заявка на разбан одобрена! Пользователь {request['user_id']} удален из черного списка."
         )
     else:
         await callback.bot.send_message(
             chat_id=chat_id,
-            text="❌ Ошибка при одобрении заявки. Возможно, заявка уже обработана."
+            text="Ошибка при одобрении заявки. Возможно, заявка уже обработана."
         )
 
     all_requests = unban_requests.get_all_pending_requests()
@@ -2413,7 +2413,7 @@ async def handle_approve_unban(callback, payload, chat_id, user_id):
         current_index = current_unban_request_index.get(chat_id, 0)
         await show_next_unban_request(chat_id, callback.bot, current_index)
     else:
-        await callback.bot.send_message(chat_id=chat_id, text="📭 Заявки на разбан закончились!")
+        await callback.bot.send_message(chat_id=chat_id, text="Заявки на разбан закончились!")
         await show_menu(chat_id, user_id, callback.bot)
 
 
@@ -2422,7 +2422,7 @@ async def handle_reject_unban(callback, payload, chat_id, user_id):
     user_states[user_id] = f"waiting_unban_reject_reason_{request_id}"
     await callback.bot.send_message(
         chat_id=chat_id,
-        text="📝 Введите причину отклонения заявки:"
+        text="Введите причину отклонения заявки:"
     )
 
 
@@ -2430,7 +2430,7 @@ async def handle_reply_complaint(callback, payload):
     complaint_id = int(payload.split("_")[1])
     complaint = student_complaints.get_complaint(complaint_id)
     if not complaint:
-        await callback.message.answer("❌ Жалоба не найдена.")
+        await callback.message.answer("Жалоба не найдена.")
         return
 
     user_states[callback.from_user.user_id] = f"waiting_reply_text_{complaint_id}"
@@ -2440,7 +2440,7 @@ async def handle_reply_complaint(callback, payload):
 async def handle_close_complaint(callback, payload, chat_id):
     complaint_id = int(payload.split("_")[1])
     if student_complaints.delete_complaint(complaint_id):
-        await callback.message.answer("✅ Жалоба закрыта.")
+        await callback.message.answer("Жалоба закрыта.")
         complaints = student_complaints.get_all_complaints()
         if complaints:
             current_index = current_complaint_index.get(chat_id, 0)
@@ -2448,7 +2448,7 @@ async def handle_close_complaint(callback, payload, chat_id):
         else:
             await callback.message.answer("Жалобы закончились!")
     else:
-        await callback.message.answer("❌ Не удалось закрыть жалобу.")
+        await callback.message.answer("Не удалось закрыть жалобу.")
 
 
 async def handle_reply_pass(callback, payload):
@@ -2465,7 +2465,7 @@ async def handle_auto_reply_pass(callback, payload):
     if target:
         await callback.bot.send_message(
             chat_id=target["chat_id"],
-            text="✅ Ваша заявка принята. Получите пропуск в кабинете 2.1.06, с 8:00 до 20:00 пн-пт, с 10:00 до 18:00 сб-вс"
+            text="Ваша заявка принята. Получите пропуск в кабинете 2.1.06, с 8:00 до 20:00 пн-пт, с 10:00 до 18:00 сб-вс"
         )
         dormitory_requests.delete_request(request_id)
         await callback.message.answer("Автоответ отправлен студенту, заявка закрыта.")
@@ -2474,9 +2474,9 @@ async def handle_auto_reply_pass(callback, payload):
 async def handle_reject_pass(callback, payload):
     request_id = int(payload.split("_")[1])
     if dormitory_requests.delete_request(request_id):
-        await callback.message.answer("❌ Заявка отклонена и удалена.")
+        await callback.message.answer("Заявка отклонена и удалена.")
     else:
-        await callback.message.answer("❌ Не удалось удалить заявку.")
+        await callback.message.answer("Не удалось удалить заявку.")
 
 
 async def handle_confirm_delete_news(callback, payload, chat_id, user_id):
@@ -2490,12 +2490,12 @@ async def handle_confirm_delete_news(callback, payload, chat_id, user_id):
     if success:
         await callback.bot.send_message(
             chat_id=chat_id,
-            text=f"✅ Новость с ID {news_id} успешно удалена!"
+            text=f"Новость с ID {news_id} успешно удалена!"
         )
     else:
         await callback.bot.send_message(
             chat_id=chat_id,
-            text=f"❌ Ошибка при удалении новости с ID {news_id}."
+            text=f"Ошибка при удалении новости с ID {news_id}."
         )
 
     await show_menu(chat_id, user_id, callback.bot)
@@ -2508,12 +2508,12 @@ async def handle_confirm_delete_event(callback, payload, chat_id, user_id):
     if success:
         await callback.bot.send_message(
             chat_id=chat_id,
-            text=f"✅ Событие с ID {event_id} успешно удалено!"
+            text=f"Событие с ID {event_id} успешно удалено!"
         )
     else:
         await callback.bot.send_message(
             chat_id=chat_id,
-            text=f"❌ Ошибка при удалении события с ID {event_id}."
+            text=f"Ошибка при удалении события с ID {event_id}."
         )
 
     await show_menu(chat_id, user_id, callback.bot)
@@ -2525,7 +2525,7 @@ async def handle_role_selection(callback, payload, chat_id, user_id):
     user_states[user_id] = "waiting_user_id"
 
     builder = InlineKeyboardBuilder()
-    builder.row(CallbackButton(text="❌ Отмена", payload="cancel_operation"))
+    builder.row(CallbackButton(text="Отмена", payload="cancel_operation"))
 
     await callback.bot.send_message(
         chat_id=chat_id,
