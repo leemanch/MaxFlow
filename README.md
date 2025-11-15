@@ -90,15 +90,17 @@ git clone https://github.com/leemanch/MaxFlow.git
 cd MaxFlow
 ```
 2. Откройте консоль (ctrl + `)
-3. Соберите образ 
+3. Создайте окружение с токеном
 ```commandline
-docker build -t university-bot .
+echo "BOT_TOKEN=<ВАШ ТОКЕН>" > .env
 ```
-4. Запустите контейнер
+4. Соберите образ 
 ```commandline
-docker run -d --name university-bot \
-  -e BOT_TOKEN="bot_token_here" \
-  university-bot
+docker build --no-cache -t university-bot .
+```
+5. Запустите контейнер
+```commandline
+docker run --env-file .env university-bot
 ```
 
 ## Локальный запуск на Windows(без Docker)
